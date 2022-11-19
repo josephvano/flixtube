@@ -12,6 +12,12 @@ app.get("/", (req, res) => {
   res.send("Hello world!");
 })
 
+app.get("/healthz", (req, res) => {
+  res.send({
+    ok: true
+  })
+});
+
 app.get("/video", async (req, res) => {
   const videoPath = path.join(PUBLIC_PATH, "SampleVideo_1280x720_1mb.mp4");
   const file      = await fsPromises.stat(videoPath)
