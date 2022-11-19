@@ -2,7 +2,7 @@ version: '3'
 
 services:
   storage:
-    image: storage
+    image: flix-storage
     build:
       context: ./storage
       dockerfile: Dockerfile
@@ -18,7 +18,7 @@ services:
     restart: "no"
 
   video-streaming:
-    image: video-streaming
+    image: flix-streaming
     build:
       context: ./video-streaming
       dockerfile: Dockerfile
