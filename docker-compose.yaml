@@ -1,13 +1,29 @@
 version: '3'
 
 services:
+  storage:
+    image: storage
+    build:
+      context: ./storage
+      dockerfile: Dockerfile
+
+    container_name: flix-storage
+
+    ports:
+      - "4001:80"
+
+    environment:
+      - PORT=80
+
+    restart: "no"
+
   video-streaming:
     image: video-streaming
     build:
-        context: ./video-streaming
-        dockerfile: Dockerfile
+      context: ./video-streaming
+      dockerfile: Dockerfile
 
-    container_name: video-streaming
+    container_name: flix-streaming
 
     ports:
       - "4000:80"
