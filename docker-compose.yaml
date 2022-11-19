@@ -32,3 +32,22 @@ services:
       - PORT=80
 
     restart: "no"
+
+  object-storage:
+    image: quay.io/minio/minio
+    command:
+      - server
+      - /data
+      - --console-address
+      - ":9090"
+
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=testtest
+
+    ports:
+      - "9000:9000"
+      - "9090:9090"
+
+    volumes:
+      - $PWD/data/object:/data
