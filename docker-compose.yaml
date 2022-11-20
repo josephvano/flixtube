@@ -38,6 +38,8 @@ services:
       - DEBUG=video-streaming*
       - STORAGE_HOST=storage
       - STORAGE_PORT=80
+      - DB_HOST=mongodb://${DB_USER}:${DB_PASSWORD}@db:27017
+      - DB_NAME=video-streaming
 
     restart: "always"
 
@@ -59,3 +61,20 @@ services:
 
     volumes:
       - $PWD/data/object:/data
+
+  db:
+    image: mongo:5.0.9
+    container_name: db
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: video-streaming
+
+    ports:
+      - "4002:27017"
+
+    volumes:
+      - $PWD/data/mongo:/data/db
+
+    restart: "always"
