@@ -78,3 +78,24 @@ services:
       - $PWD/data/mongo:/data/db
 
     restart: "always"
+
+  history:
+    image: history
+
+    build:
+      context: ./history
+      dockerfile: docker/Dockerfile
+
+    container_name: history
+
+    environment:
+      PORT: 80
+
+    ports:
+      - "4003:80"
+
+    volumes:
+      - /tmp/history/npm-cache:/root/.npm:z
+      - ./history/src:/usr/src/app/src:z
+
+    restart: "no"

@@ -9,7 +9,7 @@ const main = async () => {
   const app = express();
 
   app.get("/healthz", (_, res) => {
-    log("healthz check");
+    log("/healthz check");
 
     res.json({
       ok: true
