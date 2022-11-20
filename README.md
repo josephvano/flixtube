@@ -29,6 +29,15 @@ $ docker-compose up --build
 Visit `http://localhost:4000`
 
 ## Notes
-Minio will store files locally by default at `$PWD/data/object`
+* Minio will store files locally by default at `$PWD/data/object`
+* MongoDB will store data files locally at `$PWD/data/mongo`
 
+## References
 
+MinIO
+* [Running as Container](https://min.io/docs/minio/container/index.html)
+* [JavaScript SDK](https://min.io/docs/minio/linux/developers/javascript/minio-javascript.html)
+
+MongoDB
+* [DockerHub MongoDB Image](https://hub.docker.com/_/mongo)
+* [Using TypeScript with MongoDB](https://www.mongodb.com/compatibility/using-typescript-with-mongodb-tutorial)
