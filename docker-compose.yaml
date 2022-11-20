@@ -17,8 +17,8 @@ services:
       - DEBUG=storage*
       - STORAGE_BUCKET=videos
       - STORAGE_ENDPOINT=object-storage
-      - STORAGE_KEY=<key>
-      - STORAGE_SECRET=<secret>
+      - STORAGE_KEY=${STORAGE_KEY}
+      - STORAGE_SECRET=${STORAGE_SECRET}
 
     restart: "no"
 
@@ -50,8 +50,8 @@ services:
       - ":9090"
 
     environment:
-      - MINIO_ROOT_USER=<user>
-      - MINIO_ROOT_PASSWORD=<password>
+      - MINIO_ROOT_USER=${STORAGE_KEY}
+      - MINIO_ROOT_PASSWORD=${STORAGE_SECRET}
 
     ports:
       - "9000:9000"
