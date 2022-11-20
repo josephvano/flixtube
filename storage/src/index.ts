@@ -1,6 +1,6 @@
-import express            from 'express';
-import {initializeClient} from "./lib/minio";
-import debug              from "debug";
+import express, {Response} from 'express';
+import {initializeClient}  from "./lib/minio";
+import debug               from "debug";
 
 const pkg = require("../package.json")
 
@@ -11,7 +11,7 @@ const STORAGE_KEY      = process.env.STORAGE_KEY;
 const STORAGE_SECRET   = process.env.STORAGE_SECRET;
 
 const app = express();
-const log = debug("api");
+const log = debug("storage:api");
 
 app.get("/videos", async (req, res) => {
   log("videos path");
@@ -44,12 +44,19 @@ app.get("/videos", async (req, res) => {
 
     const bucket = STORAGE_BUCKET;
 
-    log(`getting bucket ${bucket}`)
+    log(`getting object ${bucket}/${path}`)
 
     client.statObject(bucket, path as string, (err, stat) => {
-      console.log(stat);
+      if (err != null) {
+        sendError(res, err);
+        return;
+      }
+
       const contentLength = stat.size;
       const contentType   = stat?.metaData['content-type'] || "video/mp4";
+
+      log(`type ${contentType}`)
+      log(`length ${contentLength}`)
 
       res.writeHead(200,
         {
@@ -60,14 +67,16 @@ app.get("/videos", async (req, res) => {
 
       client.getObject(bucket, path as string, (err, data) => {
         data.once("error", err => {
-          res.send({
-            ok   : false,
-            error: err.message
-          });
+          if (err != null) {
+            sendError(res, err);
+            return;
+          }
         });
 
+        log(`sending object ${path}`);
+
         data.pipe(res)
-      })
+      });
 
     });
 
@@ -78,10 +87,7 @@ app.get("/videos", async (req, res) => {
       message = `${ex.name}: ${ex.message}`;
     }
 
-    res.json({
-      ok: false,
-      message
-    })
+    sendError(res, new Error(message))
   }
 });
 
@@ -92,5 +98,16 @@ app.get("/healthz", (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`${pkg.name} service started on port ${PORT}`)
+  log(`${pkg.name} service started on port ${PORT}`)
 })
+
+function sendError(res: Response, error: Error, code: number = 500) {
+  log(error);
+
+  res.status(code);
+
+  res.send({
+    ok   : false,
+    error: error
+  })
+}
