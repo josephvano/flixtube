@@ -43,7 +43,7 @@ const main = async () => {
 
     const videoPath = record.path;
 
-    if(!videoPath){
+    if (!videoPath) {
       sendError(res, new Error(`Could not find video path for ${id}`), 404);
       return;
     }
@@ -60,7 +60,8 @@ const main = async () => {
         headers: req.headers
       },
       (forwardResponse: IncomingMessage) => {
-        log('callback')
+        log(`forwarded callback with ${forwardResponse.statusCode}`)
+
         if (forwardResponse.statusCode) {
           res.writeHead(forwardResponse.statusCode, forwardResponse.headers);
         }
@@ -69,7 +70,7 @@ const main = async () => {
       });
 
     req.pipe(forwardRequest);
-  })
+  });
 
   app.listen(port, () => {
     log(`starting server on port ${port}`);

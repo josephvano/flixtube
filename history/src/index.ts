@@ -14,7 +14,13 @@ const main = async () => {
     res.json({
       ok: true
     });
-  })
+  });
+
+  app.post("/viewed", (req, res) => {
+    const body = req.body;
+    console.log(body);
+    log(`viewed`);
+  });
 
   app.listen(port, () => {
     log(`starting history service listening on ${port}`);
