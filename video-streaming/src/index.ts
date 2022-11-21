@@ -5,6 +5,7 @@ import express, {
 import http, {IncomingMessage} from "http";
 import debug                   from "debug";
 import * as mongodb            from "mongodb";
+import {sendViewedMessage}     from "./lib/history-service";
 
 const app = express();
 const log = debug("video-streaming:api")
@@ -14,6 +15,7 @@ const STORAGE_HOST = process.env.STORAGE_HOST || "localhost";
 const STORAGE_PORT = process.env.STORAGE_PORT || 4001;
 const DB_HOST      = process.env.DB_HOST || "mongodb://localhost:4002";
 const DB_NAME      = process.env.DB_NAME || "video-streaming";
+const HISTORY_HOST = process.env.HISTORY_HOST || "http://history";
 
 const main = async () => {
   log(`connecting to ${DB_HOST}`)
@@ -70,6 +72,8 @@ const main = async () => {
       });
 
     req.pipe(forwardRequest);
+
+    await sendViewedMessage({host: HISTORY_HOST}, videoPath);
   });
 
   app.listen(port, () => {
