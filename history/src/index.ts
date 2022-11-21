@@ -1,8 +1,12 @@
 import express    from "express";
 import debug      from "debug";
 import bodyParser from "body-parser";
+import * as mongo from "mongodb";
 
 const log = debug("history:api")
+
+const DB_NAME = process.env.DB_NAME || "history";
+const DB_HOST = process.env.DB_HOST || "mongodb://localhost:4002";
 
 type VideoStreamedBody = {
   videoPath: string;
@@ -13,8 +17,17 @@ const main = async () => {
 
   const app = express();
 
-  // Enables JSON body parsing
+  log(`enable body parsing JSON`);
   app.use(bodyParser.json());
+
+  log(`connect to mongodb client`);
+  const client = await mongo.MongoClient.connect(DB_HOST);
+
+  log(`get database ${DB_NAME}`);
+  const db = client.db(DB_NAME);
+
+  log(`get collection for metadata`);
+  const collection = db.collection("videos");
 
   app.get("/healthz", (_, res) => {
     log("/healthz check");
@@ -25,17 +38,17 @@ const main = async () => {
   });
 
   app.post("/viewed", async (req, res) => {
-    try{
+    try {
       const body = req.body as VideoStreamedBody;
-      console.log(body);
-      if(body){
-        log(`viewed ${body.videoPath}`);
+      const ts   = new Date().toISOString();
 
-        //TODO: store in mongodb viewed video
-      }
-    }catch(ex){
-      //TODO
-      console.log(ex);
+      await collection.insertOne({videoPath: body.videoPath, ts});
+
+      log(`added viewed ${body.videoPath}`);
+
+      res.sendStatus(200);
+    } catch (ex) {
+      log(ex);
     }
   });
 

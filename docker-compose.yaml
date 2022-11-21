@@ -94,7 +94,10 @@ services:
 
     environment:
       PORT: 80
+      DEBUG: history*
       NODE_ENV: development
+      DB_HOST: mongodb://${DB_USER}:${DB_PASSWORD}@db:27017
+      DB_NAME: history
 
     ports:
       - "4003:80"
