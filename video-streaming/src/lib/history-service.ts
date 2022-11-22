@@ -1,5 +1,6 @@
-import debug from "debug";
-import http  from "http";
+import {Channel} from "amqplib";
+import debug     from "debug";
+import http      from "http";
 
 const log = debug("video-streaming:history")
 
@@ -7,11 +8,40 @@ type HistoryOptions = {
   host: string;
 }
 
+type HistoryMessagingOptions = {
+  channel: Channel;
+  queueName: string;
+  videoPath: string;
+}
+
+/**
+ * Send viewed message to queue
+ *
+ * @param options
+ */
+async function publishMessage(options: HistoryMessagingOptions) {
+  const {
+          queueName,
+          channel,
+          videoPath
+        } = options;
+
+  const body = {
+    videoPath,
+    ts: new Date().toISOString()
+  };
+
+  const payload = JSON.stringify(body);
+
+  log(`publishing message to ${queueName}`);
+  channel.publish("", queueName, Buffer.from(payload))
+}
+
 /**
  * Sends viewed request to history service
  * @param {string} videoPath
  */
-async function sendViewedMessage(options: HistoryOptions, videoPath: string) {
+async function sendViewedMessageHTTP(options: HistoryOptions, videoPath: string) {
   const url  = `${options.host}/viewed`
   const body = {
     videoPath
@@ -40,5 +70,6 @@ async function sendViewedMessage(options: HistoryOptions, videoPath: string) {
 }
 
 export {
-  sendViewedMessage
+  sendViewedMessageHTTP,
+  publishMessage
 }
