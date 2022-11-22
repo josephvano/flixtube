@@ -41,3 +41,8 @@ MinIO
 MongoDB
 * [DockerHub MongoDB Image](https://hub.docker.com/_/mongo)
 * [Using TypeScript with MongoDB](https://www.mongodb.com/compatibility/using-typescript-with-mongodb-tutorial)
+
+
+RabbitMQ
+* [docker](https://hub.docker.com/_/rabbitmq)
+* [configuration](https://www.rabbitmq.com/configure.html)
